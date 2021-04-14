@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>br.com.pitest</groupId>
+    <artifactId>pitest-avancado</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>pitest-avancado</name>
+    <description>Configurações avançadas para execução do framework Pitest</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <pitest.version>1.5.2</pitest.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <version>${pitest.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+
+            <!-- Testes Mutant Plugin -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+
+                <!-- Configuração responsável por executar os testes Mutantes na fase
+                    de Teste do projeto -->
+                <executions>
+                    <execution>
+                        <id>pit-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>mutationCoverage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <skip>false</skip>
+                    <targetClasses>
+                        <param>br.com.pitest.Empregado</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>br.com.pitest.EmpregadoTest</param>
+                    </targetTests>
+
+                    <!-- Exclui chamada de pacotes de logs do escopo de mutacao -->
+                    <avoidCallsTo>
+                        <avoidCallsTo>java.util.logging</avoidCallsTo>
+                        <avoidCallsTo>org.apache.log4j</avoidCallsTo>
+                        <avoidCallsTo>org.slf4j</avoidCallsTo>
+                        <avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
+                    </avoidCallsTo>
+
+                    <!-- Limita numero máximo de mutações para uma única unidade -->
+                    <mutationUnitSize>30</mutationUnitSize>
+                    <maxMutationsPerClass>30</maxMutationsPerClass>
+
+                    <!-- Não Cria pastas com data e hora de cada execução -->
+                    <timestampedReports>false</timestampedReports>
+
+                    <!-- Limite minimo para considerar a compilaçao falha frente a cobertura
+                        de mutações -->
+                    <mutationThreshold>10</mutationThreshold>
+
+                    <!-- Limite minimo para considerar a compilaçao falha frente a cobertura
+                        de linhas -->
+                    <coverageThreshold>10</coverageThreshold>
+
+                    <verbose>true</verbose>
+                    <outputFormats>HTML</outputFormats>
+                    <siteReportName>Mutacao_Empregado</siteReportName>
+                    <siteReportDescription>Relatorio de mutacao da classe br.com.pitest.Empregado</siteReportDescription>
+
+                    <!-- Define local para guarda do arquivo histórico da execução -->
+                    <historyInputFile>${project.build.directory}/archive/history_mutation</historyInputFile>
+                    <historyOutputFile>${project.build.directory}/archive/history_mutation</historyOutputFile>
+                    <withHistory>true</withHistory> <!-- Define os arquivos de entrada e saída de histórico para apontar um arquivo específico do projeto dentro do diretório temporário -->
+                </configuration>
+            </plugin>
+        </plugins>
+        <finalName>${project.artifactId}</finalName>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+                <configuration>
+                    <skip>false</skip>
+                    <reportsDirectory>${project.build.directory}</reportsDirectory>
+                    <sourceDataFormats>
+                        <sourceDataFormat>XML</sourceDataFormat>
+                    </sourceDataFormats>
+                    <siteReportName>Mutacao_Empregado</siteReportName>
+                    <siteReportDescription>Relatorio de mutacao da classe br.com.pitest.Empregado</siteReportDescription>
+                    <siteReportDirectory>${project.build.directory}/site</siteReportDirectory>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>
